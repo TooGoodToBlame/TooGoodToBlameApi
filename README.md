@@ -1,13 +1,14 @@
 
-Zainstaluj wymagane pakiety
-pip3 install -r .\requirements.txt
+Zainstaluj wymagane pakiety  
+`pip3 install -r .\requirements.txt`
 
-Przygotuj bazę danych
-python3 manage.py migrate
+Przygotuj bazę danych  
+`python3 manage.py migrate`
 
-uruchom server
-python3 manage.py runserver
+uruchom server  
+`python3 manage.py runserver`
 
+<<<<<<< HEAD
 
 linki:
 
@@ -39,3 +40,7 @@ Na ekranie wyszukiwania można skorzystać z formularza do filtracji ustaw. każ
 
 http://127.0.0.1:8000/edit-bill/edit-bill/<pk>
 jest formularzem edycji pozwalającym zmienić informacje o ustawie. W przyszłości poziom edycji będzie zależeć od uprawnień zalogowanego użytkownika..
+=======
+http://127.0.0.1:8001/admin/  
+test:test
+>>>>>>> 8d53dbaa42c194349db33a91f031a0907837213c
