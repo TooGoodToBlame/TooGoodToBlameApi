@@ -7,6 +7,7 @@ from main.models import Bill
 
 from .forms import BillForm, BillSearchForm
 
+
 class BillSearchView(View):
     template_name = "search_bill.html"
     form_class = BillSearchForm
