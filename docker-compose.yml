@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    command: gunicorn too_good_to_blame.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - "DATABASE_URL=postgres://user:password@db:5432/dbname"
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: dbname
+
+volumes:
+  postgres_data:

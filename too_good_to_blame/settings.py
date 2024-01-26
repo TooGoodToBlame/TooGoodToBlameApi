@@ -134,5 +134,5 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
-ALLOWED_HOSTS = ["95.160.24.163", "localhost", "127.0.0.1", "[::1]"]
+ALLOWED_HOSTS = ["95.160.24.163", "0.0.0.0",  "localhost", "127.0.0.1", "[::1]"]
 # Moje lokalne ip TODO
