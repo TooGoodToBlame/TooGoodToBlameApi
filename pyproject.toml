@@ -17,3 +17,16 @@ exclude = '''
 
 [tool.isort]
 profile = "black"
+
+[tool.ruff]
+select = [
+    "E",
+    "F",
+    "B",
+    "PL",
+    "PIE",
+    "I",
+]
+ignore = [
+    "E501",
+]

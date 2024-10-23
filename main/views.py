@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django_filters import rest_framework as django_filters
 from rest_framework import filters, generics
 
@@ -5,7 +6,7 @@ from .models import PARTIES, REGIONS, Bill, MemberOfParliament
 from .serializers import (
     BillListSerializer,
     BillSerializer,
-    MemberOfParliamentSerializer
+    MemberOfParliamentSerializer,
 )
 
 
@@ -44,7 +45,7 @@ class BillDetail(generics.RetrieveAPIView):
 
 
 
-from django.db.models import Q
+
 class BillFilter(django_filters.FilterSet):
     member_of_parliament = django_filters.NumberFilter(
         field_name="vote__member_of_parliament__id",
