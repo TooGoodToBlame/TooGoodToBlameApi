@@ -2,13 +2,19 @@ from django.db.models import Q
 from django_filters import rest_framework as django_filters
 from rest_framework import filters, generics
 
-from .models import PARTIES, REGIONS, Bill, MemberOfParliament
+from .models import PARTIES, REGIONS, Bill, MemberOfParliament, Vote
 from .serializers import (
     BillListSerializer,
     BillSerializer,
     MemberOfParliamentSerializer,
+    BillWithMPVoteSerializer,
+    VoteSerializer,
 )
 
+
+# --------------------------
+# Filtrowanie MemberOfParliament
+# --------------------------
 
 class MemberOfParliamentFilter(django_filters.FilterSet):
     party = django_filters.ChoiceFilter(choices=PARTIES)
@@ -32,19 +38,14 @@ class MemberOfParliamentList(generics.ListAPIView):
     ordering = ["party", "last_name"]
 
 
-
-
 class MemberOfParliamentDetail(generics.RetrieveAPIView):
     queryset = MemberOfParliament.objects.all()
     serializer_class = MemberOfParliamentSerializer
 
 
-class BillDetail(generics.RetrieveAPIView):
-    queryset = Bill.objects.all()
-    serializer_class = BillSerializer
-
-
-
+# --------------------------
+# Filtrowanie Bill
+# --------------------------
 
 class BillFilter(django_filters.FilterSet):
     member_of_parliament = django_filters.NumberFilter(
@@ -66,17 +67,6 @@ class BillFilter(django_filters.FilterSet):
             Q(vote__member_of_parliament__last_name__icontains=value)
         )
 
-    # def filter_member_of_parliament_name(self, queryset, name, value):
-    #     print(queryset.query)
-
-    #     queryset = queryset.filter(
-    #         vote__member_of_parliament__first_name__icontains=value
-    #     ) | queryset.filter(
-    #         vote__member_of_parliament__last_name__icontains=value
-    #     )
-    #     print(queryset.query)
-    #     return queryset
-
 
 class BillList(generics.ListAPIView):
     queryset = Bill.objects.all()
@@ -94,3 +84,47 @@ class BillList(generics.ListAPIView):
                 vote__member_of_parliament__id=member_of_parliament
             )
         return queryset.distinct()
+
+
+class BillDetail(generics.RetrieveAPIView):
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer
+
+
+# --------------------------
+# NOWE WIDOKI
+# --------------------------
+
+class MemberOfParliamentBills(generics.ListAPIView):
+    """
+    Zwraca wszystkie ustawy, na które głosował dany MemberOfParliament (pk),
+    wraz z informacją o jego głosie.
+    """
+    serializer_class = BillWithMPVoteSerializer
+
+    def get_queryset(self):
+        mp_id = self.kwargs["pk"]
+        return Bill.objects.filter(
+            vote__member_of_parliament_id=mp_id
+        ).distinct()
+
+    def get_serializer_context(self):
+        """
+        Przekazujemy mp_id do serializera, żeby w polu mp_vote wiedział,
+        czyj głos ma być zwrócony.
+        """
+        context = super().get_serializer_context()
+        context["mp_id"] = self.kwargs["pk"]
+        return context
+
+
+class BillVotes(generics.ListAPIView):
+    """
+    Zwraca wszystkich MemberOfParliament, którzy głosowali nad daną ustawą (Bill),
+    wraz z ich głosem.
+    """
+    serializer_class = VoteSerializer
+
+    def get_queryset(self):
+        bill_id = self.kwargs["pk"]
+        return Vote.objects.filter(bill_id=bill_id)

@@ -8,7 +8,6 @@ Przygotuj bazę danych
 uruchom server  
 `python3 manage.py runserver`
 
-<<<<<<< HEAD
 
 linki:
 
@@ -24,6 +23,8 @@ http://127.0.0.1:8000/api/bill_list/
 Możliwe sortowania: id, voting_date, title
 Możliwe filtrowania: member_of_parliament, member_of_parliament_name
 
+#votes
+
 http://127.0.0.1:8000/api/bill_list/?member_of_parliament=1&ordering=id
 
 http://127.0.0.1:8000/api/member_of_parliament_list/
@@ -33,14 +34,13 @@ Możliwe filtrowania: party, region
 Przykład użycia:
 http://127.0.0.1:8000/api/member_of_parliament_list/?ordering=party,number_on_listt&party=PO&region=DS
 
+
+#http://127.0.0.1:8000/api/vote
+
 Edytor:
 http://127.0.0.1:8000/edit-bill/search/
 
 Na ekranie wyszukiwania można skorzystać z formularza do filtracji ustaw. każda ustawa jest linkiem pozwalającym na jej edycję.
 
 http://127.0.0.1:8000/edit-bill/edit-bill/<pk>
-jest formularzem edycji pozwalającym zmienić informacje o ustawie. W przyszłości poziom edycji będzie zależeć od uprawnień zalogowanego użytkownika..
-=======
-http://127.0.0.1:8001/admin/  
-test:test
->>>>>>> 8d53dbaa42c194349db33a91f031a0907837213c
+jest formularzem edycji pozwalającym zmienić informacje o ustawie. W przyszłości poziom edycji będzie zależeć od uprawnień zalogowanego użytkownika.
