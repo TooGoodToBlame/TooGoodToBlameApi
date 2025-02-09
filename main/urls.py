@@ -2,8 +2,8 @@ from django.urls import path
 from .views import (
     BillDetail,
     BillList,
-    BillVotes,               # NOWE
-    MemberOfParliamentBills, # NOWE
+    BillVotes,
+    MemberOfParliamentBills,
     MemberOfParliamentDetail,
     MemberOfParliamentList,
 )

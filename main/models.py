@@ -1,24 +1,41 @@
 from django.db import models
 
 PARTIES = (
-    ("PO", "Platforma Obywatelska"),
-    ("PiS", "Prawo i Sprawiedliwość"),
-    ("Lewica", "Lewica"),
-    ("PSL", "Polskie Stronnictwo Ludowe"),
-    ("Konfederacja", "Konfederacja Wolność i Niepodległość"),
-    ("N", "Nowoczesna"),
+    ("EPP", "European People's Party"),
+    ("S&D", "Progressive Alliance of Socialists and Democrats"),
+    ("PfE", "Patriots for Europe"),
+    ("ECR", "European Conservatives and Reformists"),
+    ("Renew Europe", "Renew Europe"),
+    ("Greens/EFA", "The Greens/European Free Alliance"),
+    ("The Left", "The Left in the European Parliament - GUE/NGL"),
+    ("ESN", "Europe of Sovereign Nations"),
 )
 
 REGIONS = (
     ("DS", "Dolnośląskie"),
     ("KP", "Kujawsko-Pomorskie"),
+    ("LB", "Lubuskie"),
+    ("LD", "Łódzkie"),
+    ("LU", "Lubelskie"),
+    ("MA", "Małopolskie"),
     ("MZ", "Mazowieckie"),
-    ("WL", "Wielkopolskie"),
-    ("SL", "Śląskie"),
+    ("OP", "Opolskie"),
+    ("PK", "Podkarpackie"),
+    ("PD", "Podlaskie"),
     ("PM", "Pomorskie"),
+    ("SL", "Śląskie"),
+    ("SW", "Świętokrzyskie"),
+    ("WN", "Warmińsko-Mazurskie"),
+    ("WP", "Wielkopolskie"),
+    ("ZP", "Zachodniopomorskie"),
 )
 
-VOTES = (("Z", "Za"), ("P", "Przeciw"), ("W", "Wstzymany"))
+
+VOTES = (
+    ("Z", "Za"),
+    ("P", "Przeciw"),
+    ("W", "Wstzymany"),
+)
 
 
 class MemberOfParliament(models.Model):
@@ -37,6 +54,11 @@ class Bill(models.Model):
     content = models.TextField(null=True, blank=False)
     summary = models.TextField(null=True, blank=False)
     title = models.CharField(max_length=50)
+    result = models.CharField(
+        max_length=3,
+        choices=VOTES,
+        default="P",
+    )
 
     def __str__(self):
         return f"{self.voting_date} - {self.title}"
