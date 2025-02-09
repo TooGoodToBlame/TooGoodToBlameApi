@@ -1,8 +1,6 @@
-version: '3.8'
 services:
   web:
     build: .
-    # command: gunicorn too_good_to_blame.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
@@ -11,6 +9,7 @@ services:
       - db
     environment:
       - "DATABASE_URL=postgres://user:password@db:5432/dbname"
+  
   db:
     image: postgres:13
     volumes:
@@ -23,7 +22,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - listen [::]:80;
+      - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ./proxy_params:/etc/nginx/proxy_params

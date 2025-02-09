@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic.edit import UpdateView
 
-from main.models import Bill
+from main.models import DimBill as Bill
 
 from .forms import BillForm, BillSearchForm
 
@@ -17,13 +17,17 @@ class BillSearchView(View):
         bills = Bill.objects.all()
 
         if form.is_valid():
+            # Filtr "Has Summary"
             if form.cleaned_data["has_summary"]:
                 has_summary = form.cleaned_data["has_summary"] == "True"
                 bills = bills.filter(summary__isnull=not has_summary)
+            # Filtr "Title Search"
             if form.cleaned_data["title_search"]:
                 bills = bills.filter(title__icontains=form.cleaned_data["title_search"])
+            # Filtr daty "Od"
             if form.cleaned_data["date_from"]:
                 bills = bills.filter(voting_date__gte=form.cleaned_data["date_from"])
+            # Filtr daty "Do"
             if form.cleaned_data["date_to"]:
                 bills = bills.filter(voting_date__lte=form.cleaned_data["date_to"])
 

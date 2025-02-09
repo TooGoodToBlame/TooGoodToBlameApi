@@ -2,7 +2,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Field, Layout
 from django import forms
 
-from main.models import Bill
+from main.models import DimBill as Bill
 
 
 class BillSearchForm(forms.Form):
@@ -23,25 +23,24 @@ class BillSearchForm(forms.Form):
 
 class BillForm(forms.ModelForm):
     class Meta:
-        model = Bill
+        model = Bill 
         fields = ["title", "voting_date", "content", "summary"]
 
     def __init__(self, *args, **kwargs):
-        super(BillForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        # self.fields["title"]
         self.fields["voting_date"] = forms.DateField(
             widget=forms.TextInput(attrs={"type": "date"})
         )
-
-        # Dodajemy własny układ dla formularza, aby dostosować wielkość pól
         self.helper.layout = Layout(
             Div(
                 Div(
                     Div(HTML("form"), css_class="card-header"),
-                    "title" "voting_date",
+                    "title",
+                    "voting_date",
                     Field("content", css_class="text-input text-area"),
                     Field("summary", css_class="text-input text-area"),
+                    css_class="card-body",
                 )
             )
         )

@@ -1,5 +1,6 @@
 import random
 from collections import defaultdict
+from uuid import uuid4  # Poprawka: Importowanie poprawnego generatora UUID
 
 from django.db import migrations
 from faker import Faker
@@ -8,63 +9,61 @@ from main.models import PARTIES, REGIONS, VOTES
 
 
 def generate_data(apps, schema_editor):
-    MemberOfParliament = apps.get_model("main", "MemberOfParliament")
-    Bill = apps.get_model("main", "Bill")
-    Vote = apps.get_model("main", "Vote")
+    """
+    Funkcja wykonująca się podczas migracji 'forward':
+      - Dodaje losowych europosłów (DimMep) wraz z mep_id
+      - Dodaje losowe ustawy (DimBill) wraz z bill_id
+      - Dodaje losowe głosy (FactVote)
+    """
+    # Pobranie nowych modeli przez apps.get_model
+    MemberOfParliament = apps.get_model("main", "DimMep")
+    Bill = apps.get_model("main", "DimBill")
+    Vote = apps.get_model("main", "FactVote")
 
     fake = Faker("pl_PL")
 
-    # -----------------------------
-    # 1. Tworzymy parlamentarzystów
-    # -----------------------------
-    numbers_counter = defaultdict(lambda: 0)
+    # 1. Tworzymy losowych "posłów" (MEP)
+    numbers_counter = defaultdict(int)
     for _ in range(200):
         party = random.choice([p[0] for p in PARTIES])
+        region = random.choice([r[0] for r in REGIONS])
         numbers_counter[party] += 1
-        MemberOfParliament.objects.get_or_create(
+
+        MemberOfParliament.objects.create(
             first_name=fake.first_name(),
             last_name=fake.last_name(),
             party=party,
-            region=random.choice([r[0] for r in REGIONS]),
+            region=region,
             number_on_list=numbers_counter[party],
+            mep_id=random.randint(10000, 9999999),  # Losowy mep_id
         )
 
-    # -----------------------------
-    # 2. Tworzymy ustawy
-    # -----------------------------
-    # 50 ustaw z 'summary'
+    # 2. Tworzymy losowe ustawy (DimBill)
     for _ in range(50):
-        Bill.objects.get_or_create(
+        Bill.objects.create(
+            bill_id=f"BILL-{uuid4().hex[:8]}",  # Poprawka: Poprawny UUID
             voting_date=fake.date_this_decade(),
             content=fake.text(),
             summary=fake.sentence(),
             title=fake.sentence(),
         )
 
-    # +50 ustaw bez 'summary'
+    # Kolejne 50 ustaw bez summary:
     for _ in range(50):
-        Bill.objects.get_or_create(
+        Bill.objects.create(
+            bill_id=f"BILL-{uuid4().hex[:8]}",  # Poprawka: Poprawny UUID
             voting_date=fake.date_this_decade(),
             content=fake.text(),
             title=fake.sentence(),
+            summary=""  # Puste summary
         )
 
-    # -----------------------------
-    # 3. Losowe głosowania
-    # -----------------------------
+    # 3. Dodajemy losowe głosy (FactVote)
     poslowie = list(MemberOfParliament.objects.all())
     ustawy = list(Bill.objects.all())
 
-    # Aby zapewnić każdemu parlamentarzyście co najmniej 20 głosów,
-    # dla każdego wybieramy 20 losowych ustaw i tworzymy głosy
-    # (w razie gdyby ten głos jeszcze nie istniał).
     for mp in poslowie:
-        # Losujemy 20 różnych ustaw
-        if len(ustawy) >= 20:
-            chosen_bills = random.sample(ustawy, 20)
-        else:
-            # jeżeli w bazie byłoby mniej ustaw niż 20, bierzemy wszystkie
-            chosen_bills = ustawy
+        chosen_bills = random.sample(ustawy, min(20, len(ustawy)))
 
         for bill in chosen_bills:
             if not Vote.objects.filter(member_of_parliament=mp, bill=bill).exists():
@@ -75,14 +74,15 @@ def generate_data(apps, schema_editor):
                     vote=random_vote
                 )
 
-    # O ile chcesz jeszcze więcej głosów (ponad 20 na posła),
-    # możesz dopisać dodatkową pętlę np. z 1000 losowych głosów, itd.
-
 
 def reverse_generate_data(apps, schema_editor):
-    MemberOfParliament = apps.get_model("main", "MemberOfParliament")
-    Bill = apps.get_model("main", "Bill")
-    Vote = apps.get_model("main", "Vote")
+    """
+    Funkcja wykonująca się przy migracji 'reverse':
+      - Usuwa dane wygenerowane w tej migracji.
+    """
+    MemberOfParliament = apps.get_model("main", "DimMep")
+    Bill = apps.get_model("main", "DimBill")
+    Vote = apps.get_model("main", "FactVote")
 
     Vote.objects.all().delete()
     Bill.objects.all().delete()

@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
-from .models import Bill, MemberOfParliament, Vote
+from .models import (
+    DimMep as MemberOfParliament,
+    DimBill as Bill,
+    FactVote as Vote
+)
 
 
 class MemberOfParliamentSerializer(serializers.ModelSerializer):
@@ -24,7 +28,8 @@ class BillListSerializer(serializers.ModelSerializer):
 class BillWithMPVoteSerializer(serializers.ModelSerializer):
     """
     Serializer używany w widoku MemberOfParliamentBills.
-    Zwraca podstawowe informacje o ustawie oraz głos konkretnego parlamentarzysty (mp_vote).
+    Zwraca podstawowe informacje o ustawie (Bill) 
+    oraz głos konkretnego parlamentarzysty (mp_vote).
     """
     mp_vote = serializers.SerializerMethodField()
 
@@ -52,6 +57,7 @@ class BillWithMPVoteSerializer(serializers.ModelSerializer):
         ).first()
 
         if vote_instance:
+            # get_vote_display() korzysta z definicji choices w modelu Vote
             return vote_instance.get_vote_display()
         return None
 
